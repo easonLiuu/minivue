@@ -102,7 +102,7 @@ class Compile {
     }
 }
 
-//所有处理的操作都在这里
+//所有处理的操作都在这里（编译）
 let CompileUtil = {
     mustache (node, vm){ 
         let txt = node.textContent
