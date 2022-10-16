@@ -110,18 +110,43 @@ let CompileUtil = {
         let reg = /\{\{(.+)\}\}/
         if(reg.test(txt)) {
            let expr = RegExp.$1
-           node.textContent = txt.replace(reg, this.getVMValue(vm, expr))         
+           node.textContent = txt.replace(reg, this.getVMValue(vm, expr))   
+           //通过Watcher对象监听数据的变化
+            new Watcher(vm, expr, (newValue, oldValue) => {
+                console.log('执行了')
+                node.textContent = txt.replace(reg, newValue)
+            })      
         }
     },
     //处理v-text文本解析
     text(node, vm, expr) {        
         node.textContent = this.getVMValue(vm, expr)
+        //通过Watcher对象监听数据的变化
+        new Watcher(vm, expr, (newValue, oldValue) => {
+            console.log('执行了')
+            node.textContent = newValue
+        })
     },
     html(node, vm ,expr) {
         node.innerHTML = this.getVMValue(vm, expr)
+        //通过Watcher对象监听数据的变化
+        new Watcher(vm, expr, (newValue, oldValue) => {
+            console.log('执行了')
+            node.innerHTML = newValue
+        })
     },
     model(node, vm, expr) {
+        let self = this
         node.value = this.getVMValue(vm, expr)
+        //实现双向的数据绑定 给node注册input事件 当前元素value发生改变 修改对应的数据
+        node.addEventListener('input', function(){
+            self.setVMValue(vm, expr, this.value)           
+        })
+        //通过Watcher对象监听数据的变化
+        new Watcher(vm, expr, (newValue, oldValue) => {
+            console.log('执行了')
+            node.value = newValue
+        })
     },
     eventHandler(node, vm, type, expr) {
         //给当前元素注册事件
@@ -141,5 +166,18 @@ let CompileUtil = {
             data = data[key]
         })
         return data
+    },
+
+    setVMValue(vm, expr, value) {
+        let data = vm.$data
+        let arr = expr.split('.')
+        arr.forEach((key, index) => {
+            //如果index是最后一个 需要设置值
+            if(index < arr.length - 1 ) {
+                data = data[key]
+            }else{
+                data[key] = value
+            }
+        })
     }
 }

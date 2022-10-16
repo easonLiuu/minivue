@@ -8,6 +8,7 @@
 </head>
 <body>
     <div id="app">
+        {{msg}}
         <p>{{car.brand}}</p>
         <p>大家好</p>
         <p>大家好{{msg}}</p>
@@ -16,6 +17,7 @@
         <input type="text" v-model="msg">
         <button v-on:click="clickFn">按钮</button>
     </div>
+    <script src="./src/watcher.js"></script>
     <script src="./src/observe.js"></script>
     <script src="./src/compile.js"></script>
     <script src="./src/vue.js"></script>   
@@ -33,7 +35,7 @@
             methods: {
                 clickFn () {
                     //vue中methods中this指向当前实例
-                    console.log(this.$data.msg)
+                    this.$data.car.brand = '嘻嘻'
                 }
             }
         })
